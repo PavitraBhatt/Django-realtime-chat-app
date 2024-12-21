@@ -12,8 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",") or []
-print('allowed host :',ALLOWED_HOSTS)
-import secrets
 
 # Installed Applications
 INSTALLED_APPS = [
@@ -46,7 +44,7 @@ MIDDLEWARE = [
 ]
 
 # URL and Template Configuration
-ROOT_URLCONF = 'Django_realtime_chat_app.urls' 
+ROOT_URLCONF = 'Django_realtime_chat_app.urls'
 
 TEMPLATES = [
     {
@@ -63,10 +61,6 @@ TEMPLATES = [
         },
     },
 ]
-
-# WSGI and ASGI Applications
-ASGI_APPLICATION = 'Django_realtime_chat_app.asgi.application'
-WSGI_APPLICATION = 'Django_realtime_chat_app.wsgi.application'
 
 
 # Database Configuration
@@ -94,7 +88,6 @@ USE_TZ = True
 
 # Static and Media Files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -122,8 +115,30 @@ CORS_ALLOW_ALL_ORIGINS = True  # Adjust for production
 # Added the custom backend using mobile number
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default backend
-    'your_app_name.chat_app.MobileNumberBackend',
+    'chat_app.authentication_backends.MobileNumberBackend',
 ]
 
 
+# WSGI Configuration
+WSGI_APPLICATION = 'Django_realtime_chat_app.wsgi.application'
+
+# Channels Layer (WebSocket support)
+ASGI_APPLICATION = 'Django_realtime_chat_app.asgi.application'
+
+# User Model
 AUTH_USER_MODEL = 'chat_app.CustomUser'
+
+# REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+# Redis
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
+
+# CORS Headers
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True

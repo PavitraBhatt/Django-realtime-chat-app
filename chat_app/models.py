@@ -11,15 +11,9 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Profile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        related_name='profile_detail'
-    )
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile_detail')
     is_online = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Profile of {self.user.username}"
 
 class ChatSession(models.Model):
     user1 = models.ForeignKey(
@@ -113,12 +107,14 @@ class ChatMessage(models.Model):
 
     @staticmethod
     def mark_sender_message_inactive(message_id):
-        return ChatMessage.objects.filter(id=message_id).update(
-            message_detail__Sclr=True
-        )
+        message = ChatMessage.objects.filter(id=message_id).first()
+        if message:
+            message.message_detail['Sclr'] = True
+            message.save(update_fields=['message_detail'])
 
     @staticmethod
     def mark_receiver_message_inactive(message_id):
-        return ChatMessage.objects.filter(id=message_id).update(
-            message_detail__Rclr=True
-        )
+        message = ChatMessage.objects.filter(id=message_id).first()
+        if message:
+            message.message_detail['Rclr'] = True
+            message.save(update_fields=['message_detail'])

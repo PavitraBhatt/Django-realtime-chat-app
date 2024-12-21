@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
-from .models import *
-from .form import MobileLoginForm
+from .models import ChatSession, ChatMessage
+from .forms import MobileLoginForm
+from chat_app.models import CustomUser
 
 
 def home(request):
@@ -19,7 +20,7 @@ def create_friend(request):
     user_1 = request.user
     if request.GET.get('id'):
         user2_id = request.GET.get('id')
-        user_2 = get_object_or_404(User, id=user2_id)
+        user_2 = get_object_or_404(CustomUser, id=user2_id)
         created = ChatSession.create_if_not_exists(user_1, user_2)
         if created:
             messages.success(request, f'{user_2.username} successfully added to your chat list!')
@@ -29,7 +30,7 @@ def create_friend(request):
 
     user_all_friends = ChatSession.objects.filter(Q(user1=user_1) | Q(user2=user_1))
     user_list = {friend.user1.id for friend in user_all_friends}.union({friend.user2.id for friend in user_all_friends})
-    all_users = User.objects.exclude(Q(username=user_1.username) | Q(id__in=user_list))
+    all_users = CustomUser.objects.exclude(Q(username=user_1.username) | Q(id__in=user_list))
     return render(request, 'chat/create_friend.html', {'all_user': all_users})
 
 
@@ -85,6 +86,7 @@ def mobile_login(request):
             mobile_number = form.cleaned_data['mobile_number']
             password = form.cleaned_data['password']
             user = authenticate(request, username=mobile_number, password=password)
+            print('user :', user)
             if user:
                 login(request, user)
                 return redirect('home')  # Redirect to the home page or dashboard
