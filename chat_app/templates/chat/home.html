@@ -10,9 +10,9 @@
             {% if request.user.is_authenticated %}
             Hello {{request.user.username}} : 
             <a href="{% url 'friend_list' %}" style="text-decoration: none; color: rgb(255, 95, 2);"> My Chat List</a> 
-            <span id = 'overall_unread' class="w3-badge w3-large w3-green w3-margin-right">{{unread_msg}}</span>
+            <span id='overall_unread' class="w3-badge w3-large w3-green w3-margin-right">{{unread_msg}}</span>
             {% else %}
-            Login Required : <a href="/api_auth/login/">Login</a>{% endif %}
+            Login Required : <a href="{% url 'mobile_login' %}">Login</a>{% endif %}
         </b>
 
         <br/>
@@ -22,14 +22,12 @@
 {% endblock %}
 
 {% block script %}
-
     <script>
         PersonalSocket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                if (data.msg_type === 'MESSAGE_COUNTER') {
-                    document.getElementById("overall_unread").textContent = data.overall_unread_msg
-                }
+            const data = JSON.parse(e.data);
+            if (data.msg_type === 'MESSAGE_COUNTER') {
+                document.getElementById("overall_unread").textContent = data.overall_unread_msg
             }
+        }
     </script>
-
 {% endblock %}

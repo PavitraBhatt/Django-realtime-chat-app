@@ -79,22 +79,16 @@ def get_last_message(request):
 
 def mobile_login(request):
     if request.method == 'POST':
-        print('request:', request)
         form = MobileLoginForm(request.POST)
-        print('form :', form)
         if form.is_valid():
             mobile_number = form.cleaned_data['mobile_number']
-            print('mobile number :', mobile_number)
             password = form.cleaned_data['password']
-            print('password :', password)
             user = authenticate(request, username=mobile_number, password=password)
-            print('user :', user)
             if user:
                 login(request, user)
-                return redirect('home')
+                return redirect('home_page')  # Ensure this redirects to the home page
             else:
                 messages.error(request, 'Invalid mobile number or password.')
     else:
         form = MobileLoginForm()
-        print('else form :', form)
     return render(request, 'chat/mobile_login.html', {'form': form})

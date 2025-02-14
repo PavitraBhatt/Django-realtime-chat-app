@@ -105,9 +105,9 @@ CHANNEL_LAYERS = {
 }
 
 # Login and Redirects
-LOGIN_URL = '/api_auth/login'
+LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home/' 
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = True  # Adjust for production
