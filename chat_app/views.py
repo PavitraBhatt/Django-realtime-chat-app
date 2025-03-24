@@ -8,7 +8,7 @@ from .models import ChatSession, ChatMessage
 from .forms import MobileLoginForm
 from chat_app.models import CustomUser
 from .decorators import custom_login_required
-
+     
 def home(request):
     unread_msg = ChatMessage.count_overall_unread_msg(request.user.id)
     return render(request, 'chat/home.html', {"unread_msg": unread_msg})
